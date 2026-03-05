@@ -1,0 +1,12 @@
+numpy
+scipy
+statsmodels
+scikit-learn
+sqlalchemy
+duckdb-engine
+pyarrow
+great-expectations
+pytest
+jupyter
+matplotlib
+openpyxl
