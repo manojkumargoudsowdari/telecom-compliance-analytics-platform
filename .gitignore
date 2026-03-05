@@ -1,0 +1,13 @@
+data/bronze/**
+!data/bronze/.gitkeep
+data/silver/**
+!data/silver/.gitkeep
+data/gold/**
+!data/gold/.gitkeep
+
+*.pbix
+.env
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
