@@ -8,7 +8,7 @@ This folder contains the Phase 2 "Discovery & Analytics Design" artifacts for th
 
 - Jira Ticket ID: `TCAP-3`
 - Git Commit Link: `<add commit URL after commit>`
-- Version: `0.1-draft`
+- Version: `0.2-draft`
 - Date: `2026-03-05`
 
 ## Deliverables
@@ -35,6 +35,7 @@ This folder contains the Phase 2 "Discovery & Analytics Design" artifacts for th
 - Phase 2 is documentation and analytics design only.
 - No ingestion pipeline, bronze load, or production transformation is implemented in this phase.
 - FCC complaint data will be profiled using a small sample before full ingestion design begins.
+- The approved Phase 2 scope is limited to FCC-supported fields and FCC-supported KPI definitions.
 
 ## Definition of Done for this Document
 
