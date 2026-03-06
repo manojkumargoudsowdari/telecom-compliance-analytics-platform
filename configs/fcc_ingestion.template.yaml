@@ -1,0 +1,23 @@
+environment:
+  name: local
+
+source:
+  endpoint: https://opendata.fcc.gov/resource/<candidate-endpoint-pending-validation>.csv
+  file_format: csv
+
+output:
+  raw_path: data/raw/fcc/consumer_complaints
+  metadata_path: data/raw/fcc/_metadata
+
+run:
+  mode: full
+  id_strategy: timestamp_utc_compact
+  timestamp_format: iso_8601_utc
+
+http:
+  request_timeout_seconds: 120
+  max_retries: 3
+  retry_backoff_seconds: 5
+
+overrides:
+  enabled: true
