@@ -2,7 +2,7 @@ environment:
   name: local
 
 source:
-  endpoint: https://opendata.fcc.gov/resource/consumer-complaints.csv
+  endpoint: https://opendata.fcc.gov/resource/<candidate-endpoint-pending-validation>.csv
   file_format: csv
 
 output:

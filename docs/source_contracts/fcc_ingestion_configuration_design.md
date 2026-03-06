@@ -34,8 +34,8 @@ variables or platform settings to override selected values.
 Recommended precedence order:
 
 1. Environment-specific overrides
-2. Local configuration file
-3. Code defaults only where safe
+2. Configuration file values
+3. Code defaults for non-critical local development only
 
 ## Required Configuration Keys
 
@@ -44,8 +44,9 @@ Recommended precedence order:
 - Key: `source.endpoint`
 - Purpose: Fully qualified machine-readable FCC extraction endpoint
 - Example:
-  `https://opendata.fcc.gov/resource/consumer-complaints.csv`
+  `https://opendata.fcc.gov/resource/<candidate-endpoint-pending-validation>.csv`
 - Rule: Must remain aligned with the validated source contract
+- Status: `Candidate endpoint pending validation`
 
 ### Raw Output Path
 
@@ -130,7 +131,8 @@ Recommended per-run layout:
 
 - `data/raw/fcc/consumer_complaints/{run_id}/source_file.csv`
 
-This keeps each ingestion batch isolated and supports repeatable reruns.
+This keeps each ingestion batch isolated, traceable, and safe for reruns
+without overwriting prior raw payloads.
 
 ### Metadata Root
 
@@ -174,7 +176,7 @@ environment:
   name: local
 
 source:
-  endpoint: https://opendata.fcc.gov/resource/consumer-complaints.csv
+  endpoint: https://opendata.fcc.gov/resource/<candidate-endpoint-pending-validation>.csv
   file_format: csv
 
 output:
@@ -199,6 +201,8 @@ overrides:
 
 - The ingestion pipeline must not hard-code source endpoints or output
   paths.
+- No business-critical values should rely on code defaults in deployed
+  environments.
 - Batch IDs and timestamps must be generated in UTC.
 - Local defaults must work without deployed infrastructure.
 - Deployed environments must be able to override configuration without
