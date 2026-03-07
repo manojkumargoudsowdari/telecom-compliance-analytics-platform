@@ -2,11 +2,16 @@ environment:
   name: local
 
 source:
-  endpoint: https://opendata.fcc.gov/resource/<candidate-endpoint-pending-validation>.csv
-  file_format: csv
+  endpoint: https://opendata.fcc.gov/resource/3xyp-aqkj.json
+  file_format: json
+  pagination:
+    enabled: true
+    method: limit_offset
+    page_size: 50000
 
 output:
   raw_path: data/raw/fcc/consumer_complaints
+  raw_file_prefix: consumer_complaints_page
   metadata_path: data/raw/fcc/_metadata
 
 run:

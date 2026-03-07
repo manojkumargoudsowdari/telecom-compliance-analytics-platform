@@ -5,17 +5,17 @@
 This document defines the ingestion configuration design for the Phase 3
 FCC Consumer Complaints pipeline.
 
-Together with the FCC source contract, this configuration design completes
-Task 1 for Phase 3 by establishing the externalized settings the pipeline
-will consume before ingestion code is implemented.
+Together with the FCC source contract, this configuration design
+establishes the externalized settings the pipeline consumes for Phase 3
+raw ingestion.
 
 ## Traceability
 
 - Jira Ticket ID: `TCAP-4`
-- Version: `0.1-draft`
+- Version: `1.0`
 - Date: `2026-03-06`
 - Phase: `Phase 3 - Production Data Ingestion Pipeline`
-- Status: `Task 1 configuration design`
+- Status: `Production configuration design aligned to JSON paging`
 
 ## Design Goals
 
@@ -42,11 +42,23 @@ Recommended precedence order:
 ### Source Endpoint
 
 - Key: `source.endpoint`
-- Purpose: Fully qualified machine-readable FCC extraction endpoint
-- Example:
-  `https://opendata.fcc.gov/resource/<candidate-endpoint-pending-validation>.csv`
-- Rule: Must remain aligned with the validated source contract
-- Status: `Candidate endpoint pending validation`
+- Purpose: Fully qualified FCC Socrata JSON base endpoint
+- Example: `https://opendata.fcc.gov/resource/3xyp-aqkj.json`
+- Rule: Must remain aligned with the production source contract
+
+### Source Pagination
+
+- Key: `source.pagination.enabled`
+- Recommended Initial Value: `true`
+- Purpose: Enables paginated full snapshot retrieval
+
+- Key: `source.pagination.method`
+- Recommended Initial Value: `limit_offset`
+- Purpose: Declares the paging strategy used by the source API
+
+- Key: `source.pagination.page_size`
+- Recommended Initial Value: `50000`
+- Purpose: Number of records requested per page
 
 ### Raw Output Path
 
@@ -54,6 +66,13 @@ Recommended precedence order:
 - Purpose: Root landing path for unmodified FCC source files
 - Example: `data/raw/fcc/consumer_complaints`
 - Rule: Raw payloads must be written without business transformation
+
+### Raw Output Filename
+
+- Key: `output.raw_file_prefix`
+- Purpose: Deterministic landed raw file prefix within each run directory
+- Recommended Initial Value: `consumer_complaints_page`
+- Rule: The prefix must remain stable so page files are audit-friendly
 
 ### Run Mode
 
@@ -65,8 +84,8 @@ Recommended precedence order:
 ### File Format
 
 - Key: `source.file_format`
-- Allowed Values: `csv`, `json`
-- Recommended Initial Value: `csv`
+- Allowed Values: `json`
+- Recommended Initial Value: `json`
 - Purpose: Declares the expected source serialization format
 
 ### Batch / Run ID Strategy
@@ -129,7 +148,7 @@ Recommended root:
 
 Recommended per-run layout:
 
-- `data/raw/fcc/consumer_complaints/{run_id}/source_file.csv`
+- `data/raw/fcc/consumer_complaints/{run_id}/page_000001.json`
 
 This keeps each ingestion batch isolated, traceable, and safe for reruns
 without overwriting prior raw payloads.
@@ -162,6 +181,9 @@ environment-specific settings rather than changing code.
 Expected override targets:
 
 - `source.endpoint`
+- `source.pagination.enabled`
+- `source.pagination.method`
+- `source.pagination.page_size`
 - `output.raw_path`
 - `output.metadata_path`
 - `run.mode`
@@ -176,11 +198,16 @@ environment:
   name: local
 
 source:
-  endpoint: https://opendata.fcc.gov/resource/<candidate-endpoint-pending-validation>.csv
-  file_format: csv
+  endpoint: https://opendata.fcc.gov/resource/3xyp-aqkj.json
+  file_format: json
+  pagination:
+    enabled: true
+    method: limit_offset
+    page_size: 50000
 
 output:
   raw_path: data/raw/fcc/consumer_complaints
+  raw_file_prefix: consumer_complaints_page
   metadata_path: data/raw/fcc/_metadata
 
 run:
@@ -201,6 +228,7 @@ overrides:
 
 - The ingestion pipeline must not hard-code source endpoints or output
   paths.
+- The ingestion pipeline must externalize page size and paging behavior.
 - No business-critical values should rely on code defaults in deployed
   environments.
 - Batch IDs and timestamps must be generated in UTC.
@@ -209,8 +237,16 @@ overrides:
   modifying source code.
 - Metadata output must remain separate from raw landed files.
 
-## Task 1 Completion Statement
+## Landing Expectations
 
-With the FCC source contract draft and this ingestion configuration
-design, Task 1 is complete at the documentation and design level. Code
-implementation begins in the next Phase 3 tasks.
+The finalized Phase 3 raw ingestion design lands one JSON file per page
+under each run-specific directory.
+
+Recommended page file pattern:
+
+- `{raw_file_prefix}_{page_number:06d}.json`
+
+Example:
+
+- `consumer_complaints_page_000001.json`
+- `consumer_complaints_page_000002.json`

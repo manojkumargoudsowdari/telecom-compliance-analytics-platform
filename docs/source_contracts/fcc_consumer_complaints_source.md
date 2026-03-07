@@ -2,52 +2,54 @@
 
 ## Purpose
 
-This document defines the draft production source contract for the FCC
+This document defines the production source contract for the FCC
 Consumer Complaints dataset used by the Telecom Compliance Analytics
 Platform (TCAP) ingestion pipeline.
-
-This PR establishes the source contract draft for Phase 3. Endpoint
-validation is intentionally deferred to the next task so the ingestion
-pipeline can be implemented against a documented contract while the final
-machine-readable extraction URL is confirmed.
 
 ## Traceability
 
 - Jira Ticket ID: `TCAP-4`
-- Version: `0.2-draft`
+- Version: `1.0`
 - Date: `2026-03-06`
 - Phase: `Phase 3 - Production Data Ingestion Pipeline`
-- Status: `Draft source contract pending endpoint validation`
+- Status: `Production source contract approved`
 
 ## 1. Data Source
 
 - Source Name: `FCC Consumer Complaints`
 - Provider: `Federal Communications Commission (FCC)`
-- Access Method: `Open Data API / downloadable open dataset`
+- Access Method: `Open Data API`
 - Dataset Portal: `https://www.fcc.gov/consumer-complaints-center-data`
 - Source Classification: `Official public source`
 
 ## 2. Access Method
 
 The ingestion pipeline retrieves data from the FCC public open data source
-using a machine-readable endpoint.
+using the Socrata JSON API.
 
 - Access Type: `API`
 - Protocol: `HTTPS`
-- Supported Formats: `JSON / CSV`
+- Supported Formats: `JSON`
 - Authentication: `None (public dataset)`
-- Retrieval Pattern: `Batch pull`
+- Retrieval Pattern: `Paginated full snapshot batch pull`
 
 ## 3. Dataset Endpoint
 
-The pipeline will use the FCC open data endpoint once validated during the
-next implementation task.
+The pipeline uses the FCC Socrata JSON base endpoint as the production
+source for full snapshot ingestion.
 
-- Candidate API Endpoint:
-  `https://opendata.fcc.gov/resource/consumer-complaints.csv`
-- Endpoint Status: `Draft - to be validated before production use`
+- Production API Endpoint:
+  `https://opendata.fcc.gov/resource/3xyp-aqkj.json`
+- Dataset Landing Page:
+  `https://opendata.fcc.gov/Consumer/CGB-Consumer-Complaints-Data/3xyp-aqkj`
+- Metadata Endpoint:
+  `https://opendata.fcc.gov/api/views/3xyp-aqkj`
+- Columns Schema Endpoint:
+  `https://opendata.fcc.gov/api/views/3xyp-aqkj/columns.json`
+- Pagination Method: `$limit + $offset`
+- Page Size: `50000`
 - Contract Rule:
-  `The validated endpoint becomes the sole production extraction endpoint unless this document is updated`
+  `The production ingestion pipeline must use this base endpoint unless this document is updated`
 
 ## 4. Expected Schema (Initial)
 
@@ -73,12 +75,11 @@ pipeline expects at the start of Phase 3.
 ## 5. Update Frequency
 
 - Update Frequency: `Periodic`
-- Ingestion Mode: `Batch`
-- Expected Refresh Behavior: `New and/or appended records may appear over time`
+- Ingestion Mode: `Batch full snapshot`
+- Expected Refresh Behavior: `New and/or updated records may appear over time`
 
-Until the FCC publishing cadence is validated, the pipeline should assume
-the dataset may change between runs and should support repeatable
-ingestion.
+The pipeline should assume the dataset may change between runs and should
+support repeatable full snapshot ingestion.
 
 ## 6. Source Guarantees
 
@@ -90,6 +91,7 @@ The ingestion design currently assumes the following:
 - Historical data may be appended or updated.
 - The source remains the authoritative external system for complaint
   records made available through this dataset.
+- The JSON API supports paginated retrieval using `$limit` and `$offset`.
 
 ## 7. Source Reliability Risks
 
@@ -98,6 +100,7 @@ The ingestion pipeline must account for the following operational risks:
 - API rate limits or throttling
 - Schema changes or field additions/removals
 - Dataset content updates between runs
+- Pagination logic errors or incomplete page retrieval
 - Temporary source downtime or network failures
 - Endpoint relocation or portal changes
 - Incomplete or delayed source publishing
