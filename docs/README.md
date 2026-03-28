@@ -1,17 +1,19 @@
-# Phase 2 Documentation
+# Documentation Index
 
 ## Purpose
 
-This folder contains the Phase 2 "Discovery & Analytics Design" artifacts for the Telecom Compliance Analytics Platform (TCAP).
+This folder contains the project documentation for the Telecom
+Compliance Analytics Platform (TCAP).
 
 ## Traceability
 
-- Jira Ticket ID: `TCAP-3`
-- Git Commit Link: `<add commit URL after commit>`
-- Version: `0.2-draft`
-- Date: `2026-03-05`
+- Active documentation phases in this repository:
+  - `TCAP-3` Phase 2 discovery and analytics design
+  - `TCAP-4` Phase 3 FCC raw ingestion implementation
 
-## Deliverables
+## Documents
+
+### Phase 2
 
 1. [phase2-data-understanding.md](./phase2-data-understanding.md)
 2. [phase2-data-dictionary.md](./phase2-data-dictionary.md)
@@ -20,25 +22,18 @@ This folder contains the Phase 2 "Discovery & Analytics Design" artifacts for th
 5. [phase2-kpi-definitions.md](./phase2-kpi-definitions.md)
 6. [phase2-dashboard-design.md](./phase2-dashboard-design.md)
 
-## Recommended Completion Order
+### Phase 3
 
-1. Complete the dataset exploration notebook in `notebooks/`.
-2. Document dataset structure and risks in `phase2-data-understanding.md`.
-3. Build the field-level reference in `phase2-data-dictionary.md`.
-4. Define the stakeholder problem in `phase2-business-problem.md`.
-5. Translate stakeholder questions into `phase2-analytics-requirements.md`.
-6. Finalize formulas and rules in `phase2-kpi-definitions.md`.
-7. Map KPIs to reporting views in `phase2-dashboard-design.md`.
+1. [phase3-fcc-raw-ingestion.md](./phase3-fcc-raw-ingestion.md)
+2. [source_contracts/fcc_consumer_complaints_source.md](./source_contracts/fcc_consumer_complaints_source.md)
+3. [source_contracts/fcc_ingestion_configuration_design.md](./source_contracts/fcc_ingestion_configuration_design.md)
+4. [source_contracts/fcc_raw_landing_zone_design.md](./source_contracts/fcc_raw_landing_zone_design.md)
+5. [source_contracts/fcc_raw_ingestion_run_note.md](./source_contracts/fcc_raw_ingestion_run_note.md)
+6. [evidence/phase3/runbook.md](./evidence/phase3/runbook.md)
 
-## Assumptions
+## Notes
 
-- Phase 2 is documentation and analytics design only.
-- No ingestion pipeline, bronze load, or production transformation is implemented in this phase.
-- FCC complaint data will be profiled using a small sample before full ingestion design begins.
-- The approved Phase 2 scope is limited to FCC-supported fields and FCC-supported KPI definitions.
-
-## Definition of Done for this Document
-
-- The list of Phase 2 deliverables is complete and current.
-- The recommended execution order reflects the intended analysis workflow.
-- Traceability fields are populated for the active Jira ticket and resulting commit.
+- Phase 2 documents the problem framing, data understanding, and
+  analytics design.
+- Phase 3 documents the implemented FCC raw ingestion pipeline and its
+  evidence-backed validation.
