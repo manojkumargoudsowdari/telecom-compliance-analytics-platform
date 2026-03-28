@@ -87,6 +87,10 @@ def download_json_page_with_retries(
             payload = response.json()
             if not isinstance(payload, list):
                 raise DownloadError("Expected JSON array payload from source endpoint.")
+            if any(not isinstance(record, dict) for record in payload):
+                raise DownloadError(
+                    "Expected each JSON array item to be an object from the source endpoint."
+                )
             return JsonPageResult(
                 records=payload,
                 fetched_at_utc=utc_now_iso(),

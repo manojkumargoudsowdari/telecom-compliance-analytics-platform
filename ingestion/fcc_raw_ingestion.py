@@ -72,6 +72,22 @@ def build_run_metadata(
     }
 
 
+def try_write_run_metadata(
+    metadata_root: str,
+    run_id: str,
+    metadata: dict[str, Any],
+) -> bool:
+    try:
+        write_run_metadata(metadata_root, run_id, metadata)
+    except OSError as exc:
+        print(
+            f"Failed to write run metadata for run_id={run_id}: {exc}",
+            file=sys.stderr,
+        )
+        return False
+    return True
+
+
 def run_ingestion(
     config: dict[str, Any],
     *,
@@ -106,6 +122,8 @@ def run_ingestion(
             retry_backoff_seconds=retry_backoff_seconds,
         )
         fetched_at_utc = page.fetched_at_utc
+        if not page.records:
+            break
         landed_file = write_json_page(
             run_directory=run_directory,
             raw_file_prefix=raw_file_prefix,
@@ -199,7 +217,15 @@ def main(argv: list[str] | None = None) -> int:
             current_page_number=progress_state["current_page_number"],
             current_offset=progress_state["current_offset"],
         )
-        write_run_metadata(metadata_root, run_id, metadata)
+        if not try_write_run_metadata(metadata_root, run_id, metadata):
+            print(
+                (
+                    f"Raw ingestion failed for run_id={run_id}: metadata write failed. "
+                    f"Partial raw files may already exist under {landing_directory}."
+                ),
+                file=sys.stderr,
+            )
+            return 1
     except (ConfigError, DownloadError, OSError, ValueError) as exc:
         if run_id and metadata_root and progress_state:
             metadata = build_run_metadata(
@@ -217,7 +243,7 @@ def main(argv: list[str] | None = None) -> int:
                 current_page_number=progress_state["current_page_number"],
                 current_offset=progress_state["current_offset"],
             )
-            write_run_metadata(metadata_root, run_id, metadata)
+            try_write_run_metadata(metadata_root, run_id, metadata)
             print(
                 (
                     f"Raw ingestion failed for run_id={run_id}: {exc}. "

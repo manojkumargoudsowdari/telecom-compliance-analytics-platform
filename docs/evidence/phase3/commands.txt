@@ -1,0 +1,132 @@
+# Phase 3 FCC Raw Ingestion Commands
+
+# Section: repo state inspection
+$outputPath = 'docs/evidence/phase3/outputs/01-git-status-before.txt'
+@(
+  'COMMAND: git status --short --branch',
+  (git status --short --branch),
+  '',
+  'COMMAND: git diff --cached --name-status',
+  (git diff --cached --name-status),
+  '',
+  'COMMAND: git diff --name-status',
+  (git diff --name-status),
+  '',
+  'COMMAND: git ls-files --others --exclude-standard',
+  (git ls-files --others --exclude-standard)
+) | Set-Content -Path $outputPath
+
+# Section: pytest execution
+$outputPath = 'docs/evidence/phase3/outputs/02-pytest.txt'
+$pytestOutput = python -m pytest -q 2>&1
+@('COMMAND: python -m pytest -q', $pytestOutput, '', "EXIT_CODE: $LASTEXITCODE") | Set-Content -Path $outputPath
+
+# Section: clean FCC ingestion run
+$outputPath = 'docs/evidence/phase3/outputs/03-fcc-ingestion-run.txt'
+python -m ingestion.fcc_raw_ingestion --config configs/fcc_ingestion.template.yaml 2>&1 | Tee-Object -FilePath $outputPath
+$exitCode = $LASTEXITCODE
+Add-Content -Path $outputPath -Value "`nEXIT_CODE: $exitCode"
+
+# Section: metadata verification
+@'
+import json
+from pathlib import Path
+
+metadata_root = Path('data/raw/fcc/_metadata')
+metadata_files = [p for p in metadata_root.glob('*.json') if p.name != '.gitkeep']
+latest_metadata = max(metadata_files, key=lambda p: p.stat().st_mtime)
+metadata = json.loads(latest_metadata.read_text(encoding='utf-8'))
+run_id = metadata['run_id']
+run_directory = Path(metadata['landing_directory'])
+page_files = sorted(run_directory.glob('*.json'))
+
+lines = []
+lines.append('COMMAND: metadata verification from latest successful FCC raw ingestion run')
+lines.append(f'LATEST_METADATA_FILE: {latest_metadata.as_posix()}')
+lines.append(f'RUN_ID: {run_id}')
+lines.append(f'LANDING_DIRECTORY: {run_directory.as_posix()}')
+lines.append(f'RUN_DIRECTORY_EXISTS: {run_directory.exists()}')
+lines.append(f'METADATA_STATUS: {metadata.get("status")}')
+lines.append(f'METADATA_TOTAL_PAGES_FETCHED: {metadata.get("total_pages_fetched")}')
+lines.append(f'METADATA_TOTAL_RECORDS_FETCHED: {metadata.get("total_records_fetched")}')
+lines.append(f'METADATA_TOTAL_BYTES_LANDED: {metadata.get("total_bytes_landed")}')
+lines.append(f'METADATA_FAILURE_MESSAGE_IS_NULL: {metadata.get("failure_message") is None}')
+lines.append(f'METADATA_EXCEPTION_TYPE_IS_NULL: {metadata.get("exception_type") is None}')
+lines.append(f'LANDED_PAGE_FILE_COUNT: {len(page_files)}')
+lines.append(f'PAGE_COUNT_RECONCILES: {len(page_files) == metadata.get("total_pages_fetched")}')
+lines.append('')
+lines.append('METADATA_JSON:')
+lines.append(json.dumps(metadata, indent=2))
+print('\n'.join(lines))
+'@ | python - | Set-Content docs\evidence\phase3\outputs\04-metadata-verification.txt
+
+# Section: raw page verification
+@'
+import json
+from pathlib import Path
+
+metadata_root = Path('data/raw/fcc/_metadata')
+metadata_files = [p for p in metadata_root.glob('*.json') if p.name != '.gitkeep']
+latest_metadata = max(metadata_files, key=lambda p: p.stat().st_mtime)
+metadata = json.loads(latest_metadata.read_text(encoding='utf-8'))
+run_id = metadata['run_id']
+run_directory = Path(metadata['landing_directory'])
+page_files = sorted(run_directory.glob('*.json'))
+
+all_arrays = True
+all_objects = True
+empty_pages = []
+record_total = 0
+for path in page_files:
+    payload = json.loads(path.read_text(encoding='utf-8'))
+    is_array = isinstance(payload, list)
+    is_object_array = is_array and all(isinstance(item, dict) for item in payload)
+    if not is_array:
+        all_arrays = False
+    if not is_object_array:
+        all_objects = False
+    if is_array:
+        record_total += len(payload)
+        if len(payload) == 0:
+            empty_pages.append(path.name)
+
+last_page = page_files[-1]
+last_payload = json.loads(last_page.read_text(encoding='utf-8'))
+expected_next_page = run_directory / f'consumer_complaints_page_{len(page_files) + 1:06d}.json'
+
+lines = []
+lines.append('COMMAND: raw page verification from latest successful FCC raw ingestion run')
+lines.append(f'RUN_ID: {run_id}')
+lines.append(f'RUN_DIRECTORY: {run_directory.as_posix()}')
+lines.append(f'PAGE_FILE_COUNT: {len(page_files)}')
+lines.append(f'FIRST_PAGE: {page_files[0].name}')
+lines.append(f'LAST_PAGE: {last_page.name}')
+lines.append(f'ALL_FILES_ARE_JSON_ARRAYS: {all_arrays}')
+lines.append(f'ALL_ARRAY_ITEMS_ARE_OBJECTS: {all_objects}')
+lines.append(f'EMPTY_PAGE_FILES: {empty_pages if empty_pages else "NONE"}')
+lines.append(f'LAST_PAGE_RECORD_COUNT: {len(last_payload)}')
+lines.append(f'NO_TERMINAL_EMPTY_PAGE_FILE: {len(last_payload) > 0 and not expected_next_page.exists() and not empty_pages}')
+lines.append(f'TOTAL_RECORDS_FROM_FILES: {record_total}')
+lines.append(f'RECORD_COUNTS_RECONCILE: {record_total == metadata.get("total_records_fetched")}')
+lines.append(f'EXPECTED_NEXT_PAGE_PRESENT: {expected_next_page.exists()}')
+lines.append('')
+lines.append('SAMPLE_FIRST_PAGE_OBJECT:')
+lines.append(json.dumps(json.loads(page_files[0].read_text(encoding="utf-8"))[0], indent=2))
+print('\n'.join(lines))
+'@ | python - | Set-Content docs\evidence\phase3\outputs\05-raw-page-verification.txt
+
+# Section: failed-path validation
+$invalidConfig = 'docs/evidence/phase3/outputs/fcc_ingestion.invalid.yaml'
+Copy-Item 'configs/fcc_ingestion.template.yaml' $invalidConfig -Force
+(Get-Content $invalidConfig) | Where-Object { $_ -notmatch 'metadata_path:' } | Set-Content $invalidConfig
+$failureOutput = python -m ingestion.fcc_raw_ingestion --config $invalidConfig 2>&1
+$exitCode = $LASTEXITCODE
+$hasTraceback = ($failureOutput | Select-String -Pattern 'Traceback').Count -gt 0
+@(
+  'COMMAND: python -m ingestion.fcc_raw_ingestion --config docs/evidence/phase3/outputs/fcc_ingestion.invalid.yaml',
+  $failureOutput,
+  '',
+  "EXIT_CODE: $exitCode",
+  "HAS_TRACEBACK: $hasTraceback"
+) | Set-Content docs\evidence\phase3\outputs\06-failure-path-validation.txt
+Remove-Item $invalidConfig

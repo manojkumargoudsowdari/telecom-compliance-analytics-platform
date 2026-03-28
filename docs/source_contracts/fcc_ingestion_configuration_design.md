@@ -92,10 +92,12 @@ Recommended precedence order:
 
 - Key: `run.id_strategy`
 - Recommended Value: `timestamp_utc_compact`
-- Example Generated Value: `20260306T221530Z`
-- Purpose: Produces a deterministic batch identifier for every ingestion
-  run
+- Example Generated Value: `20260306T221530123456Z`
+- Purpose: Produces a compact UTC batch identifier for every ingestion
+  run while remaining collision-resistant for rapid reruns
 - Rule: Each pipeline execution must emit exactly one run ID
+- Rule: the implementation may append `_{sequence}` if multiple run IDs
+  are generated within the same timestamp instant
 
 ### Timestamp Convention
 
