@@ -54,6 +54,7 @@ def validate_ingestion_config(config: dict[str, Any]) -> None:
     page_size = int(get_required(config, "source.pagination.page_size"))
     get_required(config, "output.raw_path")
     get_required(config, "output.raw_file_prefix")
+    get_required(config, "output.metadata_path")
     get_required(config, "http.request_timeout_seconds")
     get_required(config, "http.max_retries")
     get_required(config, "http.retry_backoff_seconds")

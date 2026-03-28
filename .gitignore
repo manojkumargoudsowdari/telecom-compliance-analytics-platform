@@ -4,6 +4,10 @@ data/silver/**
 !data/silver/.gitkeep
 data/gold/**
 !data/gold/.gitkeep
+data/raw/fcc/consumer_complaints/**
+!data/raw/fcc/consumer_complaints/.gitkeep
+data/raw/fcc/_metadata/**
+!data/raw/fcc/_metadata/.gitkeep
 
 *.pbix
 .env

@@ -1,0 +1,38 @@
+COMMAND: raw page verification from latest successful FCC raw ingestion run
+RUN_ID: 20260328T214636092984Z
+RUN_DIRECTORY: data/raw/fcc/consumer_complaints/20260328T214636092984Z
+PAGE_FILE_COUNT: 70
+FIRST_PAGE: consumer_complaints_page_000001.json
+LAST_PAGE: consumer_complaints_page_000070.json
+ALL_FILES_ARE_JSON_ARRAYS: True
+ALL_ARRAY_ITEMS_ARE_OBJECTS: True
+EMPTY_PAGE_FILES: NONE
+LAST_PAGE_RECORD_COUNT: 9080
+NO_TERMINAL_EMPTY_PAGE_FILE: True
+TOTAL_RECORDS_FROM_FILES: 3459080
+RECORD_COUNTS_RECONCILE: True
+EXPECTED_NEXT_PAGE_PRESENT: False
+
+SAMPLE_FIRST_PAGE_OBJECT:
+{
+  "id": "4923410",
+  "ticket_created": "2021-07-26T21:59:38.000Z",
+  "date_created": "2021-07-26T00:00:00.000",
+  "issue_time": "",
+  "issue_type": "TV",
+  "method": "Cable",
+  "issue": "Billing",
+  "caller_id_number": "None",
+  "type_of_call_or_messge": "",
+  "advertiser_business_phone_number": "None",
+  "city": "Wenhan",
+  "state": "MA",
+  "zip": "01984",
+  "location_1": {
+    "latitude": "42.59996",
+    "longitude": "-70.881083",
+    "human_address": "{\"address\": \"\", \"city\": \"MA\", \"state\": \"\", \"zip\": \"01984\"}"
+  },
+  "type_of_property_goods_or_services": "None",
+  ":@computed_region_5ic8_3ue4": "26"
+}

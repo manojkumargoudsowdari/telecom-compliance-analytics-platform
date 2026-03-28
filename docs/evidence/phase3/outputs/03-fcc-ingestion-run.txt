@@ -1,0 +1,82 @@
+[page 000001] offset=0 records=50000 cumulative_records=50000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000001.json
+[page 000002] offset=50000 records=50000 cumulative_records=100000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000002.json
+[page 000003] offset=100000 records=50000 cumulative_records=150000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000003.json
+[page 000004] offset=150000 records=50000 cumulative_records=200000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000004.json
+[page 000005] offset=200000 records=50000 cumulative_records=250000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000005.json
+[page 000006] offset=250000 records=50000 cumulative_records=300000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000006.json
+[page 000007] offset=300000 records=50000 cumulative_records=350000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000007.json
+[page 000008] offset=350000 records=50000 cumulative_records=400000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000008.json
+[page 000009] offset=400000 records=50000 cumulative_records=450000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000009.json
+[page 000010] offset=450000 records=50000 cumulative_records=500000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000010.json
+[page 000011] offset=500000 records=50000 cumulative_records=550000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000011.json
+[page 000012] offset=550000 records=50000 cumulative_records=600000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000012.json
+[page 000013] offset=600000 records=50000 cumulative_records=650000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000013.json
+[page 000014] offset=650000 records=50000 cumulative_records=700000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000014.json
+[page 000015] offset=700000 records=50000 cumulative_records=750000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000015.json
+[page 000016] offset=750000 records=50000 cumulative_records=800000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000016.json
+[page 000017] offset=800000 records=50000 cumulative_records=850000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000017.json
+[page 000018] offset=850000 records=50000 cumulative_records=900000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000018.json
+[page 000019] offset=900000 records=50000 cumulative_records=950000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000019.json
+[page 000020] offset=950000 records=50000 cumulative_records=1000000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000020.json
+[page 000021] offset=1000000 records=50000 cumulative_records=1050000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000021.json
+[page 000022] offset=1050000 records=50000 cumulative_records=1100000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000022.json
+[page 000023] offset=1100000 records=50000 cumulative_records=1150000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000023.json
+[page 000024] offset=1150000 records=50000 cumulative_records=1200000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000024.json
+[page 000025] offset=1200000 records=50000 cumulative_records=1250000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000025.json
+[page 000026] offset=1250000 records=50000 cumulative_records=1300000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000026.json
+[page 000027] offset=1300000 records=50000 cumulative_records=1350000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000027.json
+[page 000028] offset=1350000 records=50000 cumulative_records=1400000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000028.json
+[page 000029] offset=1400000 records=50000 cumulative_records=1450000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000029.json
+[page 000030] offset=1450000 records=50000 cumulative_records=1500000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000030.json
+[page 000031] offset=1500000 records=50000 cumulative_records=1550000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000031.json
+[page 000032] offset=1550000 records=50000 cumulative_records=1600000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000032.json
+[page 000033] offset=1600000 records=50000 cumulative_records=1650000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000033.json
+[page 000034] offset=1650000 records=50000 cumulative_records=1700000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000034.json
+[page 000035] offset=1700000 records=50000 cumulative_records=1750000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000035.json
+[page 000036] offset=1750000 records=50000 cumulative_records=1800000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000036.json
+[page 000037] offset=1800000 records=50000 cumulative_records=1850000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000037.json
+[page 000038] offset=1850000 records=50000 cumulative_records=1900000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000038.json
+[page 000039] offset=1900000 records=50000 cumulative_records=1950000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000039.json
+[page 000040] offset=1950000 records=50000 cumulative_records=2000000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000040.json
+[page 000041] offset=2000000 records=50000 cumulative_records=2050000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000041.json
+[page 000042] offset=2050000 records=50000 cumulative_records=2100000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000042.json
+[page 000043] offset=2100000 records=50000 cumulative_records=2150000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000043.json
+[page 000044] offset=2150000 records=50000 cumulative_records=2200000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000044.json
+[page 000045] offset=2200000 records=50000 cumulative_records=2250000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000045.json
+[page 000046] offset=2250000 records=50000 cumulative_records=2300000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000046.json
+[page 000047] offset=2300000 records=50000 cumulative_records=2350000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000047.json
+[page 000048] offset=2350000 records=50000 cumulative_records=2400000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000048.json
+[page 000049] offset=2400000 records=50000 cumulative_records=2450000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000049.json
+[page 000050] offset=2450000 records=50000 cumulative_records=2500000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000050.json
+[page 000051] offset=2500000 records=50000 cumulative_records=2550000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000051.json
+[page 000052] offset=2550000 records=50000 cumulative_records=2600000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000052.json
+[page 000053] offset=2600000 records=50000 cumulative_records=2650000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000053.json
+[page 000054] offset=2650000 records=50000 cumulative_records=2700000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000054.json
+[page 000055] offset=2700000 records=50000 cumulative_records=2750000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000055.json
+[page 000056] offset=2750000 records=50000 cumulative_records=2800000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000056.json
+[page 000057] offset=2800000 records=50000 cumulative_records=2850000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000057.json
+[page 000058] offset=2850000 records=50000 cumulative_records=2900000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000058.json
+[page 000059] offset=2900000 records=50000 cumulative_records=2950000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000059.json
+[page 000060] offset=2950000 records=50000 cumulative_records=3000000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000060.json
+[page 000061] offset=3000000 records=50000 cumulative_records=3050000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000061.json
+[page 000062] offset=3050000 records=50000 cumulative_records=3100000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000062.json
+[page 000063] offset=3100000 records=50000 cumulative_records=3150000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000063.json
+[page 000064] offset=3150000 records=50000 cumulative_records=3200000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000064.json
+[page 000065] offset=3200000 records=50000 cumulative_records=3250000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000065.json
+[page 000066] offset=3250000 records=50000 cumulative_records=3300000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000066.json
+[page 000067] offset=3300000 records=50000 cumulative_records=3350000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000067.json
+[page 000068] offset=3350000 records=50000 cumulative_records=3400000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000068.json
+[page 000069] offset=3400000 records=50000 cumulative_records=3450000 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000069.json
+[page 000070] offset=3450000 records=9080 cumulative_records=3459080 landed=data/raw/fcc/consumer_complaints/20260328T214636092984Z/consumer_complaints_page_000070.json
+{
+  "run_id": "20260328T214636092984Z",
+  "source_endpoint": "https://opendata.fcc.gov/resource/3xyp-aqkj.json",
+  "landing_directory": "data/raw/fcc/consumer_complaints/20260328T214636092984Z",
+  "total_pages_fetched": 70,
+  "total_records_fetched": 3459080,
+  "total_bytes_landed": 2355265931,
+  "fetched_at_utc": "2026-03-28T22:15:15Z",
+  "status": "success"
+}
+
+EXIT_CODE: 0

@@ -6,7 +6,7 @@ This document defines the raw landing zone structure and naming
 conventions for the Phase 3 FCC Consumer Complaints ingestion pipeline.
 
 The goal is to establish a production-oriented raw data layout that is
-simple, deterministic, auditable, and safe for repeatable ingestion runs.
+simple, auditable, and safe for repeatable ingestion runs.
 
 ## Traceability
 
@@ -65,35 +65,28 @@ Recommended metadata pattern:
 
 - Pattern: `{run_id}`
 - Source: generated from the ingestion pipeline run ID strategy
-- Recommended Format: `YYYYMMDDTHHMMSSZ`
-- Example: `20260306T221530Z`
+- Recommended Format: `YYYYMMDDTHHMMSSffffffZ`
+- Example: `20260306T221530123456Z`
+- Collision Rule: the implementation may append `_{sequence}` if more
+  than one run ID is generated within the same timestamp instant
 
 Each run directory represents a single pipeline execution boundary.
 
 ### Raw Payload File Naming
 
-Primary pattern:
+- Pattern: `{raw_file_prefix}_{page_number:06d}.json`
+- Example: `consumer_complaints_page_000001.json`
+- Rule: one UTF-8 JSON file must be landed per fetched FCC page that
+  contains records
+- Rule: the terminal empty page used to detect end-of-data must not be
+  landed
 
-- `consumer_complaints_raw.{ext}`
-
-Examples:
-
-- `consumer_complaints_raw.csv`
-- `consumer_complaints_raw.json`
-
-If a run produces multiple raw source files or partitions in the future,
-the naming pattern should remain deterministic:
-
-- `consumer_complaints_raw_part_001.{ext}`
-- `consumer_complaints_raw_part_002.{ext}`
-
-This supports future multi-file landing without redesigning the root
-layout.
+Each landed file represents one API page from the FCC source.
 
 ### Metadata File Naming
 
 - Pattern: `{run_id}.json`
-- Example: `20260306T221530Z.json`
+- Example: `20260306T221530123456Z.json`
 
 Each metadata file corresponds to exactly one ingestion run.
 
@@ -154,21 +147,16 @@ This keeps the raw layer safe for audit and operational troubleshooting.
 
 ## Example Landed Paths
 
-Single-file CSV example:
+Paged JSON example:
 
-- `data/raw/fcc/consumer_complaints/20260306T221530Z/consumer_complaints_raw.csv`
-- `data/raw/fcc/_metadata/20260306T221530Z.json`
+- `data/raw/fcc/consumer_complaints/20260306T221530123456Z/consumer_complaints_page_000001.json`
+- `data/raw/fcc/consumer_complaints/20260306T221530123456Z/consumer_complaints_page_000002.json`
+- `data/raw/fcc/_metadata/20260306T221530123456Z.json`
 
-Single-file JSON example:
+Repeated same-instant run example:
 
-- `data/raw/fcc/consumer_complaints/20260307T011500Z/consumer_complaints_raw.json`
-- `data/raw/fcc/_metadata/20260307T011500Z.json`
-
-Future multi-file example:
-
-- `data/raw/fcc/consumer_complaints/20260308T030000Z/consumer_complaints_raw_part_001.csv`
-- `data/raw/fcc/consumer_complaints/20260308T030000Z/consumer_complaints_raw_part_002.csv`
-- `data/raw/fcc/_metadata/20260308T030000Z.json`
+- `data/raw/fcc/consumer_complaints/20260306T221530123456Z_01/consumer_complaints_page_000001.json`
+- `data/raw/fcc/_metadata/20260306T221530123456Z_01.json`
 
 ## Notes for Future Bronze Processing
 

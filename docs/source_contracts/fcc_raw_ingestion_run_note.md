@@ -29,8 +29,10 @@ On success, the command prints a concise JSON summary with:
 
 - `run_id`
 - `source_endpoint`
-- `landed_file_path`
-- `file_size_bytes`
+- `landing_directory`
+- `total_pages_fetched`
+- `total_records_fetched`
+- `total_bytes_landed`
 - `fetched_at_utc`
 - `status`
 
@@ -40,5 +42,8 @@ Each execution creates one UTC run ID and lands paginated raw JSON payload
 files into a run-specific directory under the configured raw landing
 root.
 
-Each landed file preserves the raw HTTP response body for that page
-unchanged.
+Each landed file contains the raw page records serialized to UTF-8 JSON
+without business transformation.
+
+The terminal empty page used to detect end-of-data is not landed as a
+raw file.

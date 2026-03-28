@@ -1,0 +1,5 @@
+COMMAND: python -m ingestion.fcc_raw_ingestion --config docs/evidence/phase3/outputs/fcc_ingestion.invalid.yaml
+Raw ingestion failed: Missing required configuration key: output.metadata_path
+
+EXIT_CODE: 1
+HAS_TRACEBACK: False
