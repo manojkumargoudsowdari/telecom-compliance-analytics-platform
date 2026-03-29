@@ -73,6 +73,9 @@ configuration.
     non-additive and must be computed from monthly complaint totals
   - `category_share` is non-additive and must be evaluated within the
     selected monthly category context
+  - in the first Gold implementation, `category_share` is not persisted
+    as a separate physical column; it remains a Gold-defined KPI derived
+    from monthly `complaint_count` in reporting or query consumption
   - no mixed daily and monthly rows are allowed in this dataset
 
 ## 4. Dimension Tables
@@ -138,7 +141,7 @@ configuration.
 | --- | --- | --- |
 | `complaint_count` | `fact_complaints_daily` | canonical base fact for complaint counting across the approved Gold dimensions and daily grain |
 | `complaint_growth_rate` | `fact_complaints_monthly` | computed only from monthly complaint totals |
-| `category_share` for all approved categories | `fact_complaints_monthly` | computed within the monthly fact by applying the selected category axis (`issue`, `method`, or `geography`) |
+| `category_share` for all approved categories | `fact_complaints_monthly` | Gold-defined KPI derived from monthly `complaint_count` by applying the selected category axis (`issue`, `method`, or `geography`); not persisted as a separate physical column in the first implementation |
 | `period_over_period_change` | `fact_complaints_daily` | computed from daily complaint totals and rolled to monthly when needed |
 | `rolling_average_complaint_count` | `fact_complaints_monthly` | computed only from monthly complaint totals with a fixed rolling window per dataset |
 

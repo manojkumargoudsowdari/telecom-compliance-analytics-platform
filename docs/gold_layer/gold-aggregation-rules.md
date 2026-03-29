@@ -10,6 +10,15 @@ data model, and Phase 4 Silver schema contract. It defines aggregation
 behavior only. It does not define code, SQL, pipelines, or runtime
 orchestration.
 
+## 1.1 Implementation Readiness Note
+
+Because the approved Silver source is a large JSON-array file, Gold
+implementation is approved to use `ijson` for streaming parse of Silver
+inputs.
+
+Custom hand-rolled JSON streaming parsers are not approved for Gold
+implementation.
+
 ## 2. Selected Aggregation Approach
 
 ### Approved Approach
@@ -185,6 +194,17 @@ For a given query or output context:
 - all non-category dimensions remain preserved
 
 This rule prevents ambiguous denominator behavior.
+
+Implementation contract for the first Gold build:
+
+- `category_share` remains a Gold-defined KPI owned by the approved
+  monthly fact logic
+- `category_share` is derived from `fact_complaints_monthly`
+  `complaint_count` within the approved filtered context
+- `category_share` is not persisted as a separate physical column in the
+  first Gold implementation
+- `category_share` is computed in reporting or query consumption from
+  monthly fact counts while preserving Gold-owned business logic
 
 ### `rolling_average_complaint_count` Logic
 

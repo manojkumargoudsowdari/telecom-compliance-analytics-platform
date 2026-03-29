@@ -82,6 +82,16 @@ Phase 2 reporting intent for:
 - method mix
 - geography share comparisons
 
+Implementation contract for the first Gold build:
+
+- `category_share` is a Gold-defined KPI derived from
+  `fact_complaints_monthly` `complaint_count` within the approved
+  filtered context
+- `category_share` is not persisted as a separate physical column in the
+  first Gold implementation
+- `category_share` is computed in reporting or query consumption from
+  monthly fact counts while preserving Gold-owned business logic
+
 ## 4. KPI Definitions
 
 ### 3.1 `complaint_count`
