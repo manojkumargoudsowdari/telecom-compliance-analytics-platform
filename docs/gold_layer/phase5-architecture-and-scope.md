@@ -121,32 +121,6 @@ discipline.
   - `AR-06`
   - `AR-07`
 
-#### `fact_complaints_by_issue`
-
-- Primary purpose:
-  - support issue concentration, issue share, and issue trend reporting
-- Phase 2 alignment:
-  - `AR-03`
-  - `AR-06`
-  - `AR-07`
-
-#### `fact_complaints_by_method`
-
-- Primary purpose:
-  - support complaint mix analysis across `method`
-- Phase 2 alignment:
-  - `AR-02`
-  - `AR-07`
-
-#### `fact_complaints_by_geography`
-
-- Primary purpose:
-  - support state and city complaint reporting and geography-based trend
-    review
-- Phase 2 alignment:
-  - `AR-04`
-  - `AR-05`
-
 ### 6.2 Approved Dimension Datasets
 
 #### `dim_date`
@@ -215,11 +189,9 @@ output.
 Examples:
 
 - `fact_complaints_daily`
-  - one row per reporting date
+  - one row per reporting date and approved Gold dimensions
 - `fact_complaints_monthly`
-  - one row per reporting month
-- `fact_complaints_by_issue`
-  - one row per reporting period and `issue`
+  - one row per reporting month and approved Gold dimensions
 
 The same rule applies to all later Gold outputs. If a dataset cannot
 state its row-level grain clearly, it is not ready for implementation.
@@ -242,10 +214,12 @@ Examples of expected reconciliation behavior:
 
 - monthly complaint totals in `fact_complaints_monthly` must reconcile
   to Silver complaint counts grouped by the same month definition
-- issue totals in `fact_complaints_by_issue` must reconcile to Silver
-  complaint counts under the same issue and date filters
-- geography totals in `fact_complaints_by_geography` must reconcile to
-  Silver complaint counts under the same geographic and date filters
+- daily complaint totals in `fact_complaints_daily` must reconcile to
+  Silver complaint counts under the same daily and dimensional filter
+  context
+- monthly dimensional totals in `fact_complaints_monthly` must remain
+  explainable through the same issue, method, and geography filter
+  context used in reporting
 
 This contract is required so Gold remains auditable and suitable for
 Power BI reporting.
@@ -308,15 +282,17 @@ in `docs/phase2-dashboard-design.md`.
 Planned alignment approach:
 
 - Page 1: Compliance Overview
-  - supported by complaint trends, top issue summaries, and issue-share
-    capable Gold outputs
+  - supported by daily and monthly complaint trend outputs plus monthly
+    category-share capable outputs
 - Page 2: Issue Type and Method Analysis
-  - supported by issue type / method summary outputs
+  - supported by monthly fact outputs filtered by issue and method
+    dimensions
 - Page 3: Issue Category Analysis
-  - supported by issue-level summary and trend-ready Gold outputs
+  - supported by monthly fact outputs filtered by issue dimensions and
+    daily fact trend outputs where needed
 - Page 4: Geographic Analysis
-  - supported by geography summary outputs using `state` as the primary
-    geographic level
+  - supported by monthly fact outputs filtered by geography dimensions
+    using `state` as the primary geographic level
 - Page 5: Trend and Anomaly Monitoring
   - supported by Gold datasets that expose period-over-period and
     rolling comparison-ready structures
