@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 from datetime import date, datetime
+from pathlib import Path
 from typing import Any
 
 REQUIRED_FIELDS = (
@@ -31,6 +33,8 @@ EXPECTED_COLUMNS = (
     "caller_id_number",
     "advertiser_business_phone_number",
 )
+
+VALIDATION_SUMMARY_FILE_NAME = "validation_summary.json"
 
 
 def _parse_date_value(value: str) -> bool:
@@ -92,18 +96,33 @@ def _record_structurally_valid(record: dict[str, Any]) -> tuple[bool, list[str]]
     return not failures, failures
 
 
+def _write_validation_summary(
+    quality_output_directory: str | Path,
+    summary: dict[str, Any],
+) -> Path:
+    output_directory = Path(quality_output_directory)
+    output_directory.mkdir(parents=True, exist_ok=True)
+    output_path = output_directory / VALIDATION_SUMMARY_FILE_NAME
+    with output_path.open("w", encoding="utf-8", newline="\n") as handle:
+        json.dump(summary, handle, indent=2)
+        handle.write("\n")
+    return output_path
+
+
 def build_silver_validation_plan(
     *,
     config: dict[str, Any],
     source_run_id: str,
     paths: dict[str, str],
     final_candidate_records: list[dict[str, Any]] | None = None,
+    transformation_summary: dict[str, Any] | None = None,
+    reject_summary: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Validate deduplicated FCC Silver candidates against critical contract rules.
 
     This integration performs field-level and dataset-level validation aligned
-    to the Phase 4 data quality rulebook. It does not persist reports or route
-    records to reject storage.
+    to the Phase 4 data quality rulebook and persists a deterministic JSON
+    summary. It does not route records to reject storage.
     """
 
     critical_failures: list[str] = []
@@ -143,22 +162,44 @@ def build_silver_validation_plan(
         critical_failures.append("DUPLICATE_COMPLAINT_ID_IN_FINAL_DATASET")
 
     validation_passed = len(critical_failures) == 0
+    summary = {
+        "validation_passed": validation_passed,
+        "critical_rule_failures": len(critical_failures),
+        "warning_findings": len(warning_findings),
+        "informational_findings": len(informational_findings),
+        "invalid_final_records": invalid_record_count,
+        "duplicate_complaint_ids": duplicate_complaint_ids,
+        "final_candidate_records_checked": len(final_candidate_records),
+        "failed_critical_checks": sorted(set(critical_failures)),
+        "record_counts": {
+            "raw_records_read": (
+                transformation_summary["raw_records_read"]
+                if transformation_summary is not None
+                else None
+            ),
+            "candidate_valid_records_before_dedup": (
+                transformation_summary["candidate_valid_records_before_dedup"]
+                if transformation_summary is not None
+                else None
+            ),
+            "final_silver_record_count": len(final_candidate_records),
+            "reject_record_count": (
+                reject_summary["persisted_reject_record_count"]
+                if reject_summary is not None
+                else None
+            ),
+        },
+    }
+    output_path = _write_validation_summary(paths["quality_output_directory"], summary)
+    summary["quality_output_path"] = output_path.as_posix()
 
     return {
         "module": "src.silver_validator",
         "status": "validation_complete",
         "source_run_id": source_run_id,
         "quality_output_directory": paths["quality_output_directory"],
+        "quality_output_file": output_path.as_posix(),
         "config_sections": sorted(config.keys()),
         "validation_passed": validation_passed,
-        "summary": {
-            "validation_passed": validation_passed,
-            "critical_rule_failures": len(critical_failures),
-            "warning_findings": len(warning_findings),
-            "informational_findings": len(informational_findings),
-            "invalid_final_records": invalid_record_count,
-            "duplicate_complaint_ids": duplicate_complaint_ids,
-            "final_candidate_records_checked": len(final_candidate_records),
-            "failed_critical_checks": sorted(set(critical_failures)),
-        },
+        "summary": summary,
     }

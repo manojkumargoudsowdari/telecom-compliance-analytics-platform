@@ -104,14 +104,6 @@ def main(argv: list[str] | None = None) -> int:
             paths=paths,
             include_records=True,
         )
-        validation_plan = build_silver_validation_plan(
-            config=config,
-            source_run_id=args.source_run_id,
-            paths=paths,
-            final_candidate_records=transformation_plan[
-                "final_deduplicated_candidate_records"
-            ],
-        )
         reject_plan = build_silver_reject_plan(
             config=config,
             source_run_id=args.source_run_id,
@@ -120,6 +112,16 @@ def main(argv: list[str] | None = None) -> int:
             reject_timestamp_utc=transformation_plan["summary"][
                 "silver_processed_at_utc"
             ],
+        )
+        validation_plan = build_silver_validation_plan(
+            config=config,
+            source_run_id=args.source_run_id,
+            paths=paths,
+            final_candidate_records=transformation_plan[
+                "final_deduplicated_candidate_records"
+            ],
+            transformation_summary=transformation_plan["summary"],
+            reject_summary=reject_plan["summary"],
         )
         silver_output_path = None
         if validation_plan["summary"]["validation_passed"]:
