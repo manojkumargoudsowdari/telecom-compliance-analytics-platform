@@ -100,17 +100,24 @@ def main(argv: list[str] | None = None) -> int:
             config=config,
             source_run_id=args.source_run_id,
             paths=paths,
-            include_records=False,
+            include_records=True,
         )
         validation_plan = build_silver_validation_plan(
             config=config,
             source_run_id=args.source_run_id,
             paths=paths,
+            final_candidate_records=transformation_plan[
+                "final_deduplicated_candidate_records"
+            ],
         )
         reject_plan = build_silver_reject_plan(
             config=config,
             source_run_id=args.source_run_id,
             paths=paths,
+            candidate_reject_records=transformation_plan["candidate_reject_records"],
+            reject_timestamp_utc=transformation_plan["summary"][
+                "silver_processed_at_utc"
+            ],
         )
         metadata_plan = build_silver_metadata_plan(
             config=config,
@@ -122,13 +129,13 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     summary = {
-        "status": "candidate_deduplication_ready",
+        "status": "candidate_validation_ready",
         "config_path": str(Path(args.config).as_posix()),
         "source_run_id": args.source_run_id,
         "paths": paths,
         "transformation_summary": transformation_plan["summary"],
-        "validation_plan": validation_plan,
-        "reject_plan": reject_plan,
+        "validation_summary": validation_plan["summary"],
+        "reject_summary": reject_plan["summary"],
         "metadata_plan": metadata_plan,
     }
     print(json.dumps(summary, indent=2))
