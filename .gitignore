@@ -15,3 +15,4 @@ data/raw/fcc/_metadata/**
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
+docs/confluence/
