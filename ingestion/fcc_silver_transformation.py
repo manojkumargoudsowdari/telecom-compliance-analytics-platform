@@ -122,7 +122,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     summary = {
-        "status": "candidate_mapping_ready",
+        "status": "candidate_deduplication_ready",
         "config_path": str(Path(args.config).as_posix()),
         "source_run_id": args.source_run_id,
         "paths": paths,

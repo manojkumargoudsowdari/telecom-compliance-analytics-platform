@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from datetime import UTC, date, datetime
 from pathlib import Path
@@ -176,6 +177,79 @@ def _build_reject_record(
     }
 
 
+def _extract_page_number(page_file: Path) -> int:
+    suffix = page_file.stem.rsplit("_", maxsplit=1)[-1]
+    try:
+        return int(suffix)
+    except ValueError as exc:
+        raise ValueError(
+            f"Unable to determine page number from file name: {page_file.name}"
+        ) from exc
+
+
+def _canonical_raw_record_hash(raw_record: dict[str, Any]) -> str:
+    canonical_payload = json.dumps(
+        raw_record,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+    )
+    return hashlib.sha256(canonical_payload.encode("utf-8")).hexdigest()
+
+
+def _run_id_sort_key(run_id: str) -> tuple[str, int]:
+    base, separator, suffix = run_id.partition("_")
+    if not separator:
+        return base, 0
+
+    try:
+        return base, int(suffix)
+    except ValueError:
+        return base, 0
+
+
+def _candidate_sort_key(candidate: dict[str, Any]) -> tuple[Any, ...]:
+    ticket_created = candidate["record"].get("ticket_created_utc")
+    date_created = candidate["record"].get("date_created")
+
+    return (
+        _run_id_sort_key(candidate["record"]["source_run_id"]),
+        ticket_created is not None,
+        ticket_created or "",
+        date_created is not None,
+        date_created or "",
+        candidate["source_page_number"],
+        candidate["source_record_index"],
+        candidate["raw_record_hash"],
+    )
+
+
+def _deduplicate_candidates(
+    candidate_records: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], int]:
+    selected_by_complaint_id: dict[str, dict[str, Any]] = {}
+    dedup_excluded_count = 0
+
+    for candidate in candidate_records:
+        complaint_id = str(candidate["record"]["complaint_id"])
+        current_selected = selected_by_complaint_id.get(complaint_id)
+        if current_selected is None:
+            selected_by_complaint_id[complaint_id] = candidate
+            continue
+
+        if _candidate_sort_key(candidate) > _candidate_sort_key(current_selected):
+            selected_by_complaint_id[complaint_id] = candidate
+            dedup_excluded_count += 1
+        else:
+            dedup_excluded_count += 1
+
+    deduplicated_records = [
+        selected_by_complaint_id[complaint_id]
+        for complaint_id in sorted(selected_by_complaint_id)
+    ]
+    return deduplicated_records, dedup_excluded_count
+
+
 def build_silver_transformation_plan(
     *,
     config: dict[str, Any],
@@ -194,14 +268,19 @@ def build_silver_transformation_plan(
     silver_processed_at_utc = utc_now_iso()
 
     candidate_silver_records: list[dict[str, Any]] | None = [] if include_records else None
+    final_deduplicated_candidate_records: list[dict[str, Any]] | None = (
+        [] if include_records else None
+    )
     candidate_reject_records: list[dict[str, Any]] | None = [] if include_records else None
 
     raw_records_read = 0
     candidate_valid_count = 0
     candidate_reject_count = 0
+    valid_candidate_entries: list[dict[str, Any]] = []
 
     for page_file in page_files:
         page_records = _read_page_records(page_file)
+        page_number = _extract_page_number(page_file)
         for source_record_index, raw_record in enumerate(page_records, start=1):
             raw_records_read += 1
             candidate_record = _build_candidate_record(
@@ -226,21 +305,42 @@ def build_silver_transformation_plan(
                 continue
 
             candidate_valid_count += 1
+            candidate_entry = {
+                "record": candidate_record,
+                "source_page_file": page_file.name,
+                "source_page_number": page_number,
+                "source_record_index": source_record_index,
+                "raw_record_hash": _canonical_raw_record_hash(raw_record),
+            }
+            valid_candidate_entries.append(candidate_entry)
             if include_records and candidate_silver_records is not None:
                 candidate_silver_records.append(candidate_record)
 
+    deduplicated_candidate_entries, dedup_excluded_count = _deduplicate_candidates(
+        valid_candidate_entries
+    )
+    final_deduplicated_count = len(deduplicated_candidate_entries)
+
+    if include_records and final_deduplicated_candidate_records is not None:
+        final_deduplicated_candidate_records.extend(
+            candidate_entry["record"] for candidate_entry in deduplicated_candidate_entries
+        )
+
     return {
         "module": "src.silver_transformer",
-        "status": "candidate_mapping_complete",
+        "status": "candidate_deduplication_complete",
         "source_run_id": source_run_id,
         "raw_input_directory": paths["raw_input_directory"],
         "records_included_in_response": include_records,
         "candidate_silver_records": candidate_silver_records,
+        "final_deduplicated_candidate_records": final_deduplicated_candidate_records,
         "candidate_reject_records": candidate_reject_records,
         "summary": {
             "raw_page_files_read": len(page_files),
             "raw_records_read": raw_records_read,
-            "candidate_valid_records": candidate_valid_count,
+            "candidate_valid_records_before_dedup": candidate_valid_count,
+            "final_deduplicated_candidate_records": final_deduplicated_count,
+            "dedup_excluded_valid_records": dedup_excluded_count,
             "candidate_reject_records": candidate_reject_count,
             "silver_processed_at_utc": silver_processed_at_utc,
             "config_sections": sorted(config.keys()),
