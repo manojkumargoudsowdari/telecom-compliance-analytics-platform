@@ -14,6 +14,11 @@ This contract is intentionally limited to schema shape, column typing,
 nullability, and structural expectations. It does not define
 transformation rules, quality thresholds, or reject-handling behavior.
 
+The contract is based on the approved Phase 3 source contract and the
+committed full-run evidence in the repository. It is intended to be a
+durable analytics-facing contract rather than a one-off reflection of a
+single raw sample.
+
 ## 2. Dataset Definition
 
 - Dataset name: `silver_fcc_consumer_complaints`
@@ -23,6 +28,14 @@ transformation rules, quality thresholds, or reject-handling behavior.
 The contract assumes Silver records are derived from raw FCC payloads
 landed under `data/raw/fcc/consumer_complaints/{run_id}/` and remain
 traceable to the originating raw ingestion run.
+
+The naming approach is intentionally conservative:
+
+- use canonical Silver names where the improvement is structural and
+  low-risk, such as `complaint_id`, `zip_code`, and
+  `type_of_call_or_message`
+- retain source-faithful temporal names where aggressive business
+  renaming would imply semantics that are not yet formally approved
 
 ## 3. Schema Design Principles
 
@@ -40,6 +53,9 @@ traceable to the originating raw ingestion run.
   intentionally
 - Stable column names: Silver names should be durable and avoid carrying
   obvious raw-source spelling defects where a safe canonical name exists
+- Semantic stability: where source-business meaning is not yet fully
+  settled, prefer a source-faithful canonical name over a more
+  interpretive business alias
 
 ## 4. Column-Level Schema Contract
 
@@ -61,8 +77,8 @@ traceable to the originating raw ingestion run.
 
 | column_name | data_type | nullable | description | source_notes |
 | --- | --- | --- | --- | --- |
-| `ticket_created_utc` | `TIMESTAMP` | `YES` | Complaint submission timestamp carried from the raw FCC record | Mapped from raw field `ticket_created` |
-| `date_created` | `DATE` | `NO` | Canonical complaint creation date retained from the FCC source | Mapped from raw field `date_created`; kept in source terminology to avoid semantic drift |
+| `ticket_created_utc` | `TIMESTAMP` | `YES` | FCC ticket-creation timestamp retained for audit and event sequencing | Mapped from raw field `ticket_created`; retained in source-faithful form because a business alias such as "submitted" or "received" has not yet been formally approved |
+| `date_created` | `DATE` | `NO` | Canonical complaint date retained from the FCC source for current Silver analytics | Mapped from raw field `date_created`; retained in source terminology to avoid asserting a stronger business meaning than the current contract supports |
 | `issue_date` | `DATE` | `YES` | Consumer-reported date on which the issue occurred | Mapped from raw field `issue_date` |
 | `issue_time_raw` | `STRING` | `YES` | Raw consumer-reported issue time retained as text because the source values are not yet contract-safe as a typed time field | Mapped from raw field `issue_time` |
 
@@ -77,26 +93,37 @@ traceable to the originating raw ingestion run.
 
 ### E. Company / Response Fields
 
-Current Phase 3 raw FCC source evidence does not expose company or
-response-management columns such as `company`,
-`company_public_response`, or `company_response_to_consumer`.
+Company and response-management concepts remain relevant to the broader
+complaint domain, but the current FCC raw source evidenced in Phase 3
+does not expose those columns.
 
-No company/response fields are included in the initial Silver schema
-contract.
+The following fields are therefore reviewed intentionally but are not
+part of the initial persisted Silver schema contract:
+
+| candidate_field | status | review_note |
+| --- | --- | --- |
+| `company` | `not_in_initial_contract` | Complaint-domain relevant, but not present in the current FCC raw source |
+| `company_public_response` | `not_in_initial_contract` | Not present in the current FCC raw source |
+| `company_response_to_consumer` | `not_in_initial_contract` | Not present in the current FCC raw source |
+| `timely_response_flag` | `not_in_initial_contract` | Not present in the current FCC raw source |
 
 ### F. Consumer Outcome / Dispute Fields
 
-Current Phase 3 raw FCC source evidence does not expose explicit dispute
-or consumer-outcome flags such as `consumer_disputed_flag`.
+Consumer outcome and dispute concepts were also reviewed explicitly.
 
-No consumer outcome or dispute fields are included in the initial Silver
-schema contract.
+The following fields are not part of the initial persisted Silver
+schema contract because they are not present in the current FCC raw
+source:
+
+| candidate_field | status | review_note |
+| --- | --- | --- |
+| `consumer_disputed_flag` | `not_in_initial_contract` | Complaint-domain relevant, but not present in the current FCC raw source |
 
 ### G. Submission / Channel Fields
 
 | column_name | data_type | nullable | description | source_notes |
 | --- | --- | --- | --- | --- |
-| `method` | `STRING` | `YES` | Service delivery method or complaint context dimension carried from the FCC source | Mapped from raw field `method`; current source evidence does not justify renaming this to `submitted_via` |
+| `method` | `STRING` | `YES` | Service delivery method or complaint context dimension carried from the FCC source | Mapped from raw field `method`; retained in source-faithful form because `submitted_via` would imply a narrower submission-channel meaning than the current source contract supports |
 
 ### H. Geography Fields
 
@@ -116,26 +143,20 @@ narrative field.
 No narrative or free-text fields are included in the initial Silver
 schema contract.
 
-### Evaluated but Excluded from the Current Contract
+### Reviewed but Not Included in the Initial Persisted Contract
 
-The following candidate fields were evaluated because they are common in
-other complaint-domain datasets or were explicitly requested for review,
-but they are not included in the current contract because they are not
-supported by the committed Phase 3 FCC raw source evidence.
+The following candidate fields were reviewed because they are common in
+complaint-domain models or were explicitly raised during architecture
+review, but they are not part of the initial persisted Silver contract.
 
-| candidate_field | decision | rationale |
+| candidate_field | status | rationale |
 | --- | --- | --- |
-| `date_received` | `excluded` | Current source uses `date_created`; introducing `date_received` now would rename semantics without an approved mapping rule |
-| `date_sent_to_company` | `excluded` | Not present in the current FCC raw source contract |
-| `product` | `excluded` | Current source exposes `issue_type`, not a separate product taxonomy |
-| `sub_product` | `excluded` | Not present in the current FCC raw source contract |
-| `sub_issue` | `excluded` | Not present in the current FCC raw source contract |
-| `company` | `excluded` | Not present in the current FCC raw source contract |
-| `company_public_response` | `excluded` | Not present in the current FCC raw source contract |
-| `company_response_to_consumer` | `excluded` | Not present in the current FCC raw source contract |
-| `timely_response_flag` | `excluded` | Not present in the current FCC raw source contract |
-| `consumer_disputed_flag` | `excluded` | Not present in the current FCC raw source contract |
-| `submitted_via` | `excluded` | Current source evidence supports `method`; `submitted_via` would impose an unverified business reinterpretation |
+| `date_received` | `deferred_for_review` | A business-friendly alias may be appropriate later, but the current contract keeps `date_created` until Phase 4-3 formally defines the mapping semantics |
+| `date_sent_to_company` | `not_in_initial_contract` | Not present in the current FCC raw source contract |
+| `product` | `not_in_initial_contract` | Current source exposes `issue_type`, not a separate approved product taxonomy |
+| `sub_product` | `not_in_initial_contract` | Not present in the current FCC raw source contract |
+| `sub_issue` | `not_in_initial_contract` | Not present in the current FCC raw source contract |
+| `submitted_via` | `deferred_for_review` | Current source supports `method`; a later approved transformation rule could decide whether `submitted_via` is a justified alias or a semantic narrowing |
 
 ## 5. Required Fields
 
@@ -169,6 +190,16 @@ later approved revision explicitly elevates them to required status.
   naturally date-based
 - `issue_time_raw` remains `STRING` because the current source values
   are not sufficiently standardized for a contract-safe time type
+
+### Naming Decisions
+
+- `date_created` is retained instead of renaming it to
+  `date_received` in the initial contract
+- `ticket_created_utc` is retained instead of renaming it to a more
+  interpretive label such as `submitted_at_utc`
+- the contract prefers semantic stability over aggressive business
+  renaming until Phase 4-3 defines and approves any field mappings that
+  would materially change the business meaning of a column
 
 ### Boolean / Flag Fields
 
@@ -214,6 +245,9 @@ Included standardizations:
 - `type_of_call_or_message` as the canonical name for raw
   `type_of_call_or_messge`
 - `source_system` as a stable lineage field
+
+These standardizations are limited to structural cleanup and durable
+canonical naming. They do not introduce new business-event semantics.
 
 Not included in the initial contract:
 
@@ -264,6 +298,9 @@ Those concerns belong to later Phase 4 tasks.
 - Should `date_created` remain the long-term canonical complaint date
   name in Silver, or should a future approved schema revision introduce
   a business-friendly alias after transformation rules are defined?
+- Should `method` remain the long-term Silver channel field name, or
+  should a future approved schema revision introduce a canonical alias
+  only after its business meaning is formally defined?
 - Should the raw `location_1` object be decomposed into additional
   structured geography fields in a later schema revision, or remain out
   of the primary Silver contract?
