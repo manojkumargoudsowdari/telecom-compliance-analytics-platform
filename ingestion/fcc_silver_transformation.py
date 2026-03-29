@@ -11,7 +11,8 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.config_loader import ConfigError, get_optional, load_yaml_config
-from src.silver_metadata_writer import build_silver_metadata_plan
+from src.run_id import utc_now_iso
+from src.silver_metadata_writer import build_silver_metadata_plan, write_silver_dataset
 from src.silver_rejects import build_silver_reject_plan
 from src.silver_transformer import build_silver_transformation_plan
 from src.silver_validator import build_silver_validation_plan
@@ -92,6 +93,7 @@ def resolve_paths(config: dict[str, Any], source_run_id: str) -> dict[str, str]:
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv or sys.argv[1:])
+    run_start_utc = utc_now_iso()
 
     try:
         config = load_yaml_config(args.config)
@@ -119,24 +121,37 @@ def main(argv: list[str] | None = None) -> int:
                 "silver_processed_at_utc"
             ],
         )
+        silver_output_path = None
+        if validation_plan["summary"]["validation_passed"]:
+            output_path = write_silver_dataset(
+                paths["silver_output_directory"],
+                transformation_plan["final_deduplicated_candidate_records"],
+            )
+            silver_output_path = output_path.as_posix()
         metadata_plan = build_silver_metadata_plan(
             config=config,
             source_run_id=args.source_run_id,
             paths=paths,
+            transformation_summary=transformation_plan["summary"],
+            validation_summary=validation_plan["summary"],
+            reject_summary=reject_plan["summary"],
+            silver_output_path=silver_output_path,
+            run_start_utc=run_start_utc,
+            run_end_utc=utc_now_iso(),
         )
     except (ConfigError, OSError, ValueError) as exc:
         print(f"Silver transformation scaffold failed: {exc}", file=sys.stderr)
         return 1
 
     summary = {
-        "status": "candidate_validation_ready",
+        "status": "silver_pipeline_complete",
         "config_path": str(Path(args.config).as_posix()),
         "source_run_id": args.source_run_id,
         "paths": paths,
         "transformation_summary": transformation_plan["summary"],
         "validation_summary": validation_plan["summary"],
         "reject_summary": reject_plan["summary"],
-        "metadata_plan": metadata_plan,
+        "metadata_summary": metadata_plan["summary"],
     }
     print(json.dumps(summary, indent=2))
     return 0
