@@ -1,0 +1,5 @@
+raw count: 3459080
+candidate count: 3459080
+final count: 2603475
+dedup excluded: 855605
+reject count: 0
