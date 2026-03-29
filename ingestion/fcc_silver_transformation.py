@@ -100,6 +100,7 @@ def main(argv: list[str] | None = None) -> int:
             config=config,
             source_run_id=args.source_run_id,
             paths=paths,
+            include_records=False,
         )
         validation_plan = build_silver_validation_plan(
             config=config,
@@ -121,11 +122,11 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     summary = {
-        "status": "scaffold_ready",
+        "status": "candidate_mapping_ready",
         "config_path": str(Path(args.config).as_posix()),
         "source_run_id": args.source_run_id,
         "paths": paths,
-        "transformation_plan": transformation_plan,
+        "transformation_summary": transformation_plan["summary"],
         "validation_plan": validation_plan,
         "reject_plan": reject_plan,
         "metadata_plan": metadata_plan,
