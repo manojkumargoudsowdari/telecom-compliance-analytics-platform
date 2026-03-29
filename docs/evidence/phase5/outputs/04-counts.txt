@@ -1,0 +1,8 @@
+silver source record count: 2603475
+daily fact row count: 2351099
+monthly fact row count: 1998296
+daily total complaints: 2603475
+monthly total complaints: 2603475
+rolling window months: 3
+daily output file count: 138
+monthly output file count: 138

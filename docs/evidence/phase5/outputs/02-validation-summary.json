@@ -1,0 +1,33 @@
+{
+  "validation_passed": true,
+  "critical_rule_failures": 0,
+  "warning_findings": 0,
+  "informational_findings": 3,
+  "failed_critical_checks": [],
+  "record_counts": {
+    "silver_source_record_count": 2603475,
+    "daily_fact_row_count": 2351099,
+    "monthly_fact_row_count": 1998296,
+    "daily_total_complaints": 2603475,
+    "monthly_total_complaints": 2603475
+  },
+  "reconciliation_summary": {
+    "silver_to_daily_reconciled": true,
+    "daily_to_monthly_reconciled": true,
+    "filtered_context_reconciliation": {
+      "issue": true,
+      "method": true,
+      "geography": true,
+      "month": true
+    }
+  },
+  "unknown_member_row_counts": {
+    "issue_key_unknown_rows": 6168,
+    "method_key_unknown_rows": 96687,
+    "geography_key_unknown_rows": 6455
+  },
+  "rolling_window_months": 3,
+  "deferred_kpis": [
+    "category_share"
+  ]
+}

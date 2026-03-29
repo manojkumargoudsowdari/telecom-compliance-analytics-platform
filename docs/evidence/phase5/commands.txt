@@ -1,0 +1,2 @@
+python -m pip install ijson
+python ingestion/fcc_gold_transformation.py --config configs/fcc_ingestion.template.yaml --source-run-id 20260328T214636092984Z

@@ -1,0 +1,18 @@
+Reconciliation Summary
+
+Silver to daily:
+- reconciled: true
+
+Daily to monthly:
+- reconciled: true
+
+Filtered-context reconciliation:
+- issue: true
+- method: true
+- geography: true
+- month: true
+
+Concrete month example:
+- month_key: 2014-10
+- summed daily complaint_count: 241
+- matching monthly complaint_count: 241

@@ -1,0 +1,46 @@
+Gold Phase 5 Run Summary
+
+Source run id: 20260328T214636092984Z
+Status: success
+
+Note:
+- This summary is compiled from the persisted Gold metadata and validation
+  artifacts for the approved run because the CLI transcript was not stored
+  as a separate file.
+
+Silver input file:
+- data/silver/fcc/consumer_complaints/20260328T214636092984Z/silver_fcc_consumer_complaints.json
+
+Gold outputs:
+- daily fact root: data/gold/fact_complaints_daily
+- monthly fact root: data/gold/fact_complaints_monthly
+- validation artifact: data/gold/_quality/20260328T214636092984Z/validation_summary.json
+- metadata artifact: data/gold/_metadata/20260328T214636092984Z.json
+
+Record counts:
+- Silver source records read: 2603475
+- Daily fact rows: 2351099
+- Monthly fact rows: 1998296
+- Daily total complaints: 2603475
+- Monthly total complaints: 2603475
+
+Validation:
+- validation_passed: true
+- critical_rule_failures: 0
+- warning_findings: 0
+- informational_findings: 3
+
+Reconciliation:
+- silver_to_daily_reconciled: true
+- daily_to_monthly_reconciled: true
+- filtered_context_reconciliation.issue: true
+- filtered_context_reconciliation.method: true
+- filtered_context_reconciliation.geography: true
+- filtered_context_reconciliation.month: true
+
+Implementation decisions carried by this run:
+- ijson was used as the approved streaming dependency
+- monthly Gold was built only from daily Gold
+- rolling_average_complaint_count uses a fixed calendar-month window and
+  treats missing months inside that window as zero-complaint months
+- category_share is deferred from persisted Gold output

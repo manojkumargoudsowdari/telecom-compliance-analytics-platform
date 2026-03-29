@@ -26,3 +26,10 @@ http:
 
 overrides:
   enabled: true
+
+gold:
+  daily_output_path: data/gold/fact_complaints_daily
+  monthly_output_path: data/gold/fact_complaints_monthly
+  metadata_path: data/gold/_metadata
+  quality_path: data/gold/_quality
+  rolling_window_months: 3
