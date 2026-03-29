@@ -1,0 +1,11 @@
+Unknown-Member Summary
+
+Persisted unknown-member row counts:
+- issue_key_unknown_rows: 6168
+- method_key_unknown_rows: 96687
+- geography_key_unknown_rows: 6455
+
+Validation note:
+- validation_summary.json stores informational_findings = 3
+- the artifact does not persist the three informational finding names
+- these counts are the persisted basis for those informational findings

@@ -1,0 +1,15 @@
+Known Constraints Summary
+
+- category_share is Gold-defined but not persisted as a physical column in
+  the first Gold implementation
+- only the following Gold measures are persisted in this first
+  implementation:
+  - daily complaint_count
+  - monthly complaint_count
+  - monthly complaint_growth_rate
+  - monthly rolling_average_complaint_count
+- monthly Gold is derived only from daily Gold
+- ijson is the approved dependency used to stream the large Silver
+  JSON-array input
+- validation_summary.json stores only the informational finding count, not
+  the named informational entries
