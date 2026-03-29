@@ -100,6 +100,19 @@ def _previous_month_key(month_key: str) -> str | None:
     return f"{year:04d}-{month - 1:02d}"
 
 
+def _month_key_to_index(month_key: str) -> int:
+    year_text, month_text = month_key.split("-", maxsplit=1)
+    year = int(year_text)
+    month = int(month_text)
+    return (year * 12) + (month - 1)
+
+
+def _index_to_month_key(month_index: int) -> str:
+    year = month_index // 12
+    month = (month_index % 12) + 1
+    return f"{year:04d}-{month:02d}"
+
+
 def _validate_monthly_rows(
     monthly_records: list[dict[str, Any]],
     rolling_window_months: int,
@@ -147,7 +160,6 @@ def _validate_monthly_rows(
         month_to_count = {
             str(row["month_key"]): int(row["complaint_count"]) for row in ordered_rows
         }
-        trailing_counts: list[int] = []
         for row in ordered_rows:
             month_key = str(row["month_key"])
             complaint_count = int(row["complaint_count"])
@@ -167,9 +179,11 @@ def _validate_monthly_rows(
             if actual_growth != expected_growth:
                 failures.append("MONTHLY_INVALID_COMPLAINT_GROWTH_RATE")
 
-            trailing_counts.append(complaint_count)
-            window_counts = trailing_counts[-rolling_window_months:]
-            expected_rolling_average = sum(window_counts) / len(window_counts) if window_counts else None
+            current_month_index = _month_key_to_index(month_key)
+            expected_rolling_average = sum(
+                month_to_count.get(_index_to_month_key(current_month_index - offset), 0)
+                for offset in range(rolling_window_months)
+            ) / rolling_window_months
             actual_rolling_average = row.get("rolling_average_complaint_count")
             if actual_rolling_average != expected_rolling_average:
                 failures.append("MONTHLY_INVALID_ROLLING_AVERAGE")

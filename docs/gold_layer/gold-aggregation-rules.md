@@ -213,6 +213,12 @@ Implementation contract for the first Gold build:
 - the selected rolling window definition must be declared in metadata
 - the rolling window cannot vary dynamically within the same persisted
   dataset
+- the rolling window is calendar-month based
+- missing months inside the rolling window must be treated as zero
+  complaint months
+- the metric is persisted only on actual monthly output rows; missing
+  months are used in the window calculation but do not create synthetic
+  monthly fact rows
 
 ## 6. `category_share` Rules
 

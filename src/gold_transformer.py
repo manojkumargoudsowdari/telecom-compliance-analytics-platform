@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections import defaultdict, deque
+from collections import defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -44,6 +44,19 @@ def _previous_month_key(month_key: str) -> str | None:
     if month == 1:
         return f"{year - 1:04d}-12"
     return f"{year:04d}-{month - 1:02d}"
+
+
+def _month_key_to_index(month_key: str) -> int:
+    year_text, month_text = month_key.split("-", maxsplit=1)
+    year = int(year_text)
+    month = int(month_text)
+    return (year * 12) + (month - 1)
+
+
+def _index_to_month_key(month_index: int) -> str:
+    year = month_index // 12
+    month = (month_index % 12) + 1
+    return f"{year:04d}-{month:02d}"
 
 
 def _issue_key(record: dict[str, Any]) -> str:
@@ -131,7 +144,6 @@ def _build_monthly_records(
             str(record["month_key"]): int(record["complaint_count"])
             for record in ordered_partition
         }
-        rolling_counts: deque[int] = deque(maxlen=rolling_window_months)
 
         for record in ordered_partition:
             month_key = str(record["month_key"])
@@ -149,8 +161,12 @@ def _build_monthly_records(
                     complaint_count - previous_month_count
                 ) / previous_month_count
 
-            rolling_counts.append(complaint_count)
-            rolling_average = sum(rolling_counts) / len(rolling_counts) if rolling_counts else None
+            current_month_index = _month_key_to_index(month_key)
+            rolling_window_total = 0
+            for offset in range(rolling_window_months):
+                window_month_key = _index_to_month_key(current_month_index - offset)
+                rolling_window_total += month_to_count.get(window_month_key, 0)
+            rolling_average = rolling_window_total / rolling_window_months
 
             monthly_records.append(
                 {

@@ -41,4 +41,6 @@ Reconciliation:
 Implementation decisions carried by this run:
 - ijson was used as the approved streaming dependency
 - monthly Gold was built only from daily Gold
+- rolling_average_complaint_count uses a fixed calendar-month window and
+  treats missing months inside that window as zero-complaint months
 - category_share is deferred from persisted Gold output

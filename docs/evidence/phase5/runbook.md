@@ -61,6 +61,8 @@ After a successful run, the Gold pipeline writes:
   - monthly `complaint_count`
   - monthly `complaint_growth_rate`
   - monthly `rolling_average_complaint_count`
+- `rolling_average_complaint_count` is calendar-month based. Missing
+  months inside the fixed window are treated as zero-complaint months.
 - `category_share` remains a Gold-defined KPI, but it is not persisted as
   a physical column in the first Gold implementation.
 

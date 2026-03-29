@@ -447,9 +447,12 @@ Implementation contract for the first Gold build:
     - `state`
 - Calculation Logic:
   1. choose the approved reporting grain
-  2. calculate `complaint_count` for each period in the trailing window
-  3. sum complaint counts across the trailing window
-  4. divide by the number of periods included in that window
+  2. identify the fixed trailing calendar-month window ending in the
+     current month
+  3. calculate `complaint_count` for each month in that window
+  4. treat any missing month in the window as a zero-complaint month
+  5. sum complaint counts across the full calendar-month window
+  6. divide by the fixed number of months in that window
   5. compute:
      - `AVERAGE(complaint_count over trailing N periods)`
 - Rolling Window Rule:
@@ -457,6 +460,9 @@ Implementation contract for the first Gold build:
   - the selected window definition must be declared in dataset metadata
   - the rolling window must not vary dynamically within the same
     persisted dataset
+  - the window is calendar-month based, not based on the last `N`
+    observed monthly rows
+  - missing months inside the window count as zero complaint months
 - Numerator:
   - sum of period complaint counts across the trailing window
 - Denominator:
@@ -482,9 +488,11 @@ Implementation contract for the first Gold build:
   - rolling window periods must be evaluated under identical non-time
     filters
 - Null Handling Rules:
-  - early periods with incomplete trailing windows remain valid but are
-    based on the available periods only
-  - if no periods exist in the window, return null
+  - early periods with incomplete history remain valid and use the full
+    fixed calendar-month window, with pre-history months treated as
+    zero-complaint months
+  - if the dataset contains no current-month row, no KPI row exists for
+    that slice
 - Aggregation Behavior:
   - not additive across periods
   - must be recomputed from the underlying monthly complaint totals

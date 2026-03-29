@@ -303,8 +303,8 @@
     "metadata_file": "data/gold/_metadata/20260328T214636092984Z.json"
   },
   "processing_timestamps": {
-    "run_start_utc": "2026-03-29T20:40:37Z",
-    "run_end_utc": "2026-03-29T20:42:12Z"
+    "run_start_utc": "2026-03-29T20:59:39Z",
+    "run_end_utc": "2026-03-29T21:01:28Z"
   },
   "validation_summary": {
     "validation_passed": true,
