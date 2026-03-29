@@ -1,0 +1,16 @@
+{
+  "validation_passed": true,
+  "critical_rule_failures": 0,
+  "warning_findings": 0,
+  "informational_findings": 0,
+  "invalid_final_records": 0,
+  "duplicate_complaint_ids": 0,
+  "final_candidate_records_checked": 2603475,
+  "failed_critical_checks": [],
+  "record_counts": {
+    "raw_records_read": 3459080,
+    "candidate_valid_records_before_dedup": 3459080,
+    "final_silver_record_count": 2603475,
+    "reject_record_count": 0
+  }
+}
